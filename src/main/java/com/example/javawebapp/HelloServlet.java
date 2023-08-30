@@ -20,6 +20,7 @@ public class HelloServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
         out.println("<h1>" + message + "</h1>");
+        out.println("<p>Tomcat deploy automatico!!!!!!</p>");
         out.println("</body></html>");
     }
 
