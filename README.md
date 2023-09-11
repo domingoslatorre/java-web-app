@@ -93,9 +93,9 @@ ou
 ./mvnw.cmd package
 ```
 
-18. No tomcat configurado adicionar uma implantação via Add Deployment, Exploded, selecionar o diretório gerado pelo maven no projeto /apache-tomcat-10.1.12/target/java-web-app-1.0
+18. No tomcat configurado adicionar uma implantação via Add Deployment, Exploded, selecionar o diretório gerado pelo maven no projeto java-web-app/target/java-web-app-1.0
 
-19. Refazer o passo 17 e a opção Publish Server (Full) cada alteração.
+19. Refazer o passo 17 e a opção Publish Server (Full).
 
 20. No arquivo conf/context.xml do servidor adicionar o seguinte configuração `<Context reloadable="true">`
 
