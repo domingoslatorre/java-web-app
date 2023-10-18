@@ -11,5 +11,7 @@
 <a href="hello-servlet">Hello Servlet</a>
 <br>
 <a href="login.jsp">Login</a>
+<br>
+<a href="cadastro.jsp">Cadastro</a>
 </body>
 </html>
