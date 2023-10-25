@@ -3,14 +3,18 @@ package com.example.javawebapp;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import com.example.javawebapp.forms.LoginForm;
 import com.example.javawebapp.validators.EmailValidator;
+import com.example.javawebapp.validators.ValidatorUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ConstraintViolation;
 
 @WebServlet(name = "loginServlet", value = "/login")
 public class LoginServlet extends HttpServlet {
@@ -31,58 +35,17 @@ public class LoginServlet extends HttpServlet {
         String email = req.getParameter("email");
         String senha = req.getParameter("senha");
 
-        final List<String> erros = new ArrayList<>();
-        
-        if (email == null || email.isBlank()) {
-            erros.add("E-mail não pode ser vazio");
-        }
+        LoginForm loginForm = new LoginForm(email, senha);
 
-        if (senha == null || senha.isEmpty()) {
-            erros.add("Senha não pode ser vazia");
-        }
+        Set<ConstraintViolation<LoginForm>> violations = 
+            ValidatorUtil.validateObject(loginForm);
 
-        if (email != null && !EmailValidator.isValid(email)) {
-            erros.add("E-mail inválido");
-        }
-
-        if (senha != null && (senha.length() < 6 || senha.length() > 20)) {
-            erros.add("Senha deve ter no mínimo 6 e no máximo 20 caracteres");
-        }
-        
-        if (senha != null) {
-            boolean temLetraMinuscula = false;
-            boolean temLetraMaiuscula = false;
-            boolean temDigito = false;
-        
-            for (char c : senha.toCharArray()) {
-                if (Character.isLowerCase(c)) {
-                    temLetraMinuscula = true;
-                } else if (Character.isUpperCase(c)) {
-                    temLetraMaiuscula = true;
-                } else if (Character.isDigit(c)) {
-                    temDigito = true;
-                }
-            }
-
-            if (!temLetraMinuscula) {
-                erros.add("A Senha deve ter uma letra minúscula");
-            }
-
-            if (!temLetraMaiuscula) {
-                erros.add("A Senha deve ter uma letra maiúscula");
-            }
-
-            if (!temDigito) {
-                erros.add("A Senha deve ter um número");
-            }
-        }
-
-        if (erros.isEmpty()) {
+        if (violations.isEmpty()) {
             res.sendRedirect("principal.jsp");
         } else {
             req.setAttribute("email", email);
             req.setAttribute("senha", senha);
-            req.setAttribute("erros", erros);
+            req.setAttribute("violations", violations);
             req.getRequestDispatcher("login.jsp").forward(req, res);
         }
     } 

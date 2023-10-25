@@ -12,8 +12,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 
 @WebServlet(name = "cadastroServlet", value = "/cadastro")
 public class CadastroServlet extends HttpServlet {
@@ -31,9 +29,6 @@ public class CadastroServlet extends HttpServlet {
 
         CadastroForm cadastroForm = new CadastroForm(nome, email, senha);
         
-        // Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        // Set<ConstraintViolation<CadastroForm>> violations = validator.validate(cadastroForm);
-
         Set<ConstraintViolation<CadastroForm>> violations = ValidatorUtil.validateObject(cadastroForm);
         
         if (violations.isEmpty()) {
