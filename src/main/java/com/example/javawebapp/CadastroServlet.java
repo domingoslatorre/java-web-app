@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import com.example.javawebapp.forms.CadastroForm;
+import com.example.javawebapp.usuario.UsuarioDao;
 import com.example.javawebapp.validators.ValidatorUtil;
 
 import jakarta.servlet.ServletException;
@@ -12,8 +13,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 
 @WebServlet(name = "cadastroServlet", value = "/cadastro")
 public class CadastroServlet extends HttpServlet {
@@ -31,13 +30,11 @@ public class CadastroServlet extends HttpServlet {
 
         CadastroForm cadastroForm = new CadastroForm(nome, email, senha);
         
-        // Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        // Set<ConstraintViolation<CadastroForm>> violations = validator.validate(cadastroForm);
-
         Set<ConstraintViolation<CadastroForm>> violations = ValidatorUtil.validateObject(cadastroForm);
         
         if (violations.isEmpty()) {
-            res.sendRedirect("principal.jsp");
+            UsuarioDao.cadastrar(nome, email, senha);
+            res.sendRedirect("login.jsp");
         } else {
             req.setAttribute("cadastroForm", cadastroForm);
             req.setAttribute("violations", violations);
