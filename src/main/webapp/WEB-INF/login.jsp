@@ -28,6 +28,10 @@
 </ul>
 </c:if>
 
+<c:if test="${errorLogin != null}">
+<p>${errorLogin}</p>
+</c:if>
+
 <form action="login" method="post">
     <label for="email"><fmt:message key="login.email" /></label>
     <input type="text" name="email" id="email" value="${email}">

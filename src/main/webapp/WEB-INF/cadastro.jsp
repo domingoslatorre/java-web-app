@@ -24,6 +24,10 @@
 </ul>
 </c:if>
 
+<c:if test="${existeErro != null}">
+<p>${existeErro}</p>
+</c:if>
+
 <form action="cadastro" method="post">
     <label for="nome"><fmt:message key="registration.name" /></label>
     <input type="text" name="nome" id="nome" value="${cadastroForm.nome}">
