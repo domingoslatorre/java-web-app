@@ -5,7 +5,7 @@
     <title>JSP - Hello World</title>
 </head>
 <body>
-<h1><%= "Hello World!" %>
+<h1><%= "Java Web App" %>
 </h1>
 <br>
 <a href="hello-servlet">Hello Servlet</a>
@@ -15,5 +15,8 @@
 <a href="cadastro">Cadastro</a>
 <br>
 <a href="profile">Profile</a>
+<br>
+<br>
+<a href="logout">Logout</a>
 </body>
 </html>
