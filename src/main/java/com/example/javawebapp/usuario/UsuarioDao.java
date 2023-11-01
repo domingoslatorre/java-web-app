@@ -1,67 +1,140 @@
 package com.example.javawebapp.usuario;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
+
+import com.example.javawebapp.db.Conexao;
 
 // DAO = Data Access Object
 public class UsuarioDao {
-    private static Integer idAtual = 0;
-    private static List<Usuario> usuarios = new ArrayList<>();
-
-    // INSERT INTO usuarios ...
     public static Usuario cadastrar(String nome, String email, String senha) {
-        Usuario usuario = new Usuario(++idAtual, nome, email, senha);
-        usuarios.add(usuario);
-        return usuario;
+        Usuario usuario = null;
+        String sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?);";
+        
+        try (
+            Connection connection = Conexao.getConnection();
+            PreparedStatement statement = connection
+                .prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+        ) {
+            statement.setString(1, nome);
+            statement.setString(2, email);
+            statement.setString(3, senha);
+            statement.executeUpdate();
+
+            ResultSet rs = statement.getGeneratedKeys();
+
+            if(rs.next()) {
+                usuario = new Usuario(rs.getInt(1), nome, email, senha);
+            }
+
+            rs.close();
+
+            return usuario;  
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    // SELECT * FROM usuarios
     public static List<Usuario> listarTodos() {
-        return usuarios;
+        String sql = "SELECT * FROM usuarios;";
+        List<Usuario> alunos = new ArrayList<>();
+
+        try (
+            Connection connection = Conexao.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+        ) {
+            while(rs.next()) {
+                alunos.add(
+                    new Usuario(
+                        rs.getInt("id"), 
+                        rs.getString("nome"), 
+                        rs.getString("email"), 
+                        rs.getString("senha")
+                    )
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return alunos;
+        } 
+
+        return alunos;
+        
     }
 
-    // SELECT * FROM usuarios WHERE id = ?
     public static Usuario buscarPorId(Integer id) {
-        for (Usuario usuario : usuarios) {
-            if (usuario.getId().equals(id)) {
-                return usuario;
+        String sql = "SELECT * FROM usuarios WHERE id = ?;";
+
+        try (
+            Connection connection = Conexao.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            statement.setInt(1, id);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                return new Usuario(
+                    rs.getInt("id"),
+                    rs.getString("nome"),
+                    rs.getString("email"),
+                    rs.getString("senha")
+                );
             }
+
+            rs.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
+
         return null;
     }
 
-    // SELECT * FROM usuarios WHERE email = ?
     public static Usuario buscarPorEmail(String email) {
-        for (Usuario usuario : usuarios) {
-            if (usuario.getEmail().equals(email)) {
-                return usuario;
+        String sql = "SELECT * FROM usuarios WHERE email = ?;";
+
+        try (
+            Connection connection = Conexao.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            statement.setString(1, email);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                return new Usuario(
+                    rs.getInt("id"),
+                    rs.getString("nome"),
+                    rs.getString("email"),
+                    rs.getString("senha")
+                );
             }
+
+            rs.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
+
         return null;
     }
 
-    // Entrada = email e senha
-    // Saída = existe um usuario com aquele email e senha (Boolean)
-    // SELECT * FROM usuarios WHERE email = ? AND senha = ?
     public static Boolean login(String email, String senha) {
-        for (Usuario usuario : usuarios) {
-            if (
-                usuario.getEmail().equals(email) 
-                && usuario.getSenha().equals(senha)
-            ) {
-                return true;
-            }
+        Usuario usuario = buscarPorEmail(email);
+        if (usuario != null && usuario.getSenha().equals(senha)) {
+            return true;
         }
         return false;
     }
 
-    // Entrada - email
-    // Saida - se existe ou nao o usuario com aquele email
     public static Boolean existeComEmail(String email) {
-        for (Usuario usuario : usuarios) {
-            if (usuario.getEmail().equals(email)) {
-                return true;
-            }
-        }
-        return false;
+        return buscarPorEmail(email) != null;
     }
 }
