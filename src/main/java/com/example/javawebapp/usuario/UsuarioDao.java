@@ -9,10 +9,13 @@ import java.util.*;
 
 import com.example.javawebapp.db.Conexao;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
+
 // DAO = Data Access Object
 public class UsuarioDao {
     public static Usuario cadastrar(String nome, String email, String senha) {
         Usuario usuario = null;
+        String hashSenha = BCrypt.withDefaults().hashToString(12, senha.toCharArray());
         String sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?);";
         
         try (
@@ -22,13 +25,13 @@ public class UsuarioDao {
         ) {
             statement.setString(1, nome);
             statement.setString(2, email);
-            statement.setString(3, senha);
+            statement.setString(3, hashSenha);
             statement.executeUpdate();
 
             ResultSet rs = statement.getGeneratedKeys();
 
             if(rs.next()) {
-                usuario = new Usuario(rs.getInt(1), nome, email, senha);
+                usuario = new Usuario(rs.getInt(1), nome, email, hashSenha);
             }
 
             rs.close();
@@ -128,8 +131,9 @@ public class UsuarioDao {
 
     public static Boolean login(String email, String senha) {
         Usuario usuario = buscarPorEmail(email);
-        if (usuario != null && usuario.getSenha().equals(senha)) {
-            return true;
+        if (usuario != null) {
+            BCrypt.Result result = BCrypt.verifyer().verify(senha.toCharArray(), usuario.getSenha());
+            return result.verified;
         }
         return false;
     }
