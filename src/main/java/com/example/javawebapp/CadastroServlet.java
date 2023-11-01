@@ -39,7 +39,7 @@ public class CadastroServlet extends HttpServlet {
                 req.getRequestDispatcher("WEB-INF/cadastro.jsp").forward(req, res);
             } else {
                 UsuarioDao.cadastrar(nome, email, senha);
-                res.sendRedirect("principal.jsp");
+                res.sendRedirect("login");
             }
         } else {
             req.setAttribute("cadastroForm", cadastroForm);

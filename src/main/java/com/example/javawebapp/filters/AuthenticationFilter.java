@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebFilter(value = {"/profile", "/hello-servlet"})
+@WebFilter(value = {"/", "/index", "/profile", "/hello-servlet"})
 public class AuthenticationFilter implements Filter {
 
     @Override

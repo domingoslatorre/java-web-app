@@ -46,7 +46,7 @@ public class LoginServlet extends HttpServlet {
             if (UsuarioDao.login(email, senha)) {
                 HttpSession session = req.getSession();
                 session.setAttribute("emailUsuario", email);
-                res.sendRedirect("principal.jsp");
+                res.sendRedirect("index");
             } else {
                 req.setAttribute("errorLogin", "E-mail ou senha incorretos");
                 req.getRequestDispatcher("WEB-INF/login.jsp").forward(req, res);
